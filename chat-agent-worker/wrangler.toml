@@ -1,0 +1,11 @@
+name = "chat-agent-worker"
+main = "src/index.ts"
+compatibility_date = "2024-11-20"
+
+# This worker implements the Durable Object class ChatAgent
+
+[vars]
+MODEL = "@cf/meta/llama-3.3-8b-instruct"
+
+# AI binding (remote)
+ai = { binding = "AI", remote = true }
