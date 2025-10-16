@@ -11,6 +11,5 @@ export type ChatResponse = {
 
 export type Memory = {
   turns: { role: "user" | "assistant"; content: string; ts: number }[];
-  summary?: string; 
-  count: number;    
+  count: number;
 };

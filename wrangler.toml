@@ -23,7 +23,6 @@ new_classes = ["ChatAgent"]
 [vars]
 MODEL = "@cf/meta/llama-3.3-8b-instruct"
 MEMORY_MAX_MESSAGES = 24
-SUMMARIZE_EVERY_N_TURNS = 8
 
 [assets]
 directory = "./public"

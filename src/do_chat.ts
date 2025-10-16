@@ -1,4 +1,4 @@
-import { runLLM, summarize } from "./llm";
+import { runLLM } from "./llm";
 import type { Memory } from "./types";
 
 export class ChatAgent {
@@ -13,7 +13,6 @@ export class ChatAgent {
   async #getMemory(): Promise<Memory> {
     const memory = (await this.state.storage.get<Memory>("memory")) || {
       turns: [],
-      summary: "",
       count: 0,
     };
     return memory;
@@ -55,21 +54,13 @@ export class ChatAgent {
     while (memory.turns.length > MAX) memory.turns.shift();
 
     const context: { role: string; content: string }[] = [];
-    if (memory.summary)
-      context.push({
-        role: "system",
-        content: `Conversation summary: ${memory.summary}`,
-      });
     for (const t of memory.turns) context.push({ role: t.role, content: t.content });
 
     const reply = await runLLM(this.env, context);
 
     memory.turns.push({ role: "assistant", content: reply, ts: Date.now() });
 
-    const every = Number(this.env.SUMMARIZE_EVERY_N_TURNS || 8);
-    if (memory.turns.length % every === 0) {
-      await this.state.storage.setAlarm(Date.now() + 5_000);
-    }
+    // summarization and alarms removed
 
     await this.state.storage.put("memory", memory);
 
@@ -78,11 +69,5 @@ export class ChatAgent {
     });
   }
 
-  async alarm(): Promise<void> {
-    const memory = await this.#getMemory();
-    const transcript = memory.turns.map(t => `${t.role}: ${t.content}`).join("\n");
-    const s = await summarize(this.env, transcript);
-    memory.summary = s;
-    await this.state.storage.put("memory", memory);
-  }
+  // alarm/summarization removed
 }
